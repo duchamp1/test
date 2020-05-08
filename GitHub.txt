@@ -3,3 +3,89 @@ https://github.co.jp/
 Username:duchamp1
 Pass:Jo1anmiro2
 mondrian_f@ybb.ne.jp
+
+2020/05/08 13:05
+エラー：fatal: Not a git repository (or any of the parent directories): .git　対処方法
+https://qiita.com/gosairei1207/items/701b7ae494b96db0f9a1
+
+git cloneした後、git branchを確認しているところに、下記のエラーが出た！！
+ 原因は初期セットアップの不備です！
+
+エラー：fatal: Not a git repository (or any of the parent directories): .git
+
+エラー解消のために、
+まず、ユーザーの登録。
+
+$ git config --global user.name "xxxx"
+$ git config --global user.email "xxxxxx@gmail.com"
+
+そして、gitの初期化。
+
+$ git init
+Initialized empty Git repository in 作業ディレクトリ/.git/
+
+上記のように表示できたら、git branchで確認してみる。
+
+$ git branch
+* master
+
+
+無事に出た
+
+
+#初めてGitHubリポジトリにpushしたらrejectedエラーになったときの対応メモ
+GitHub初心者の僕が、初めてGitHubリポジトリにpushしたら、rejectedエラーになったので、ちゃんとpushできるようになるまでの対応をメモしました。
+
+Gitバージョン
+
+% git --version
+git version 2.9.2
+
+作業の流れ
+
+GitHubからリポジトリを作成
+「Initialize this repository with a README」にチェック
+
+ローカルリポジトリに追加
+% git add -A
+
+ロカールリポジトリにコミット
+% git commit -m "xxxxx"
+
+リモートリポジトリ（GitHub）の情報を追加
+% git remote add origin https://github.com/xxxx/xxxxx.git
+
+ローカルリポジトリをリモートリポジトリへ反映させる → rejectedエラー 
+% git push origin master
+To https://github.com/xxxx/xxxxx.git
+ ! [rejected]        master -> master (fetch first)
+error: failed to push some refs to 'https://github.com/xxxx/xxxxx.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+ググってみたら「git fetch && git merge origin/master」してからpushすればOKと書いてあったので試してみる → mergeエラー 
+% git fetch && git merge origin/master
+fatal: refusing to merge unrelated histories
+
+さらにググってみたらmergeのオプションに「--allow-unrelated-histories」をつければOKと書いてあったので試してみる → merge OK! 
+% git merge --allow-unrelated-histories origin/master
+Merge made by the 'recursive' strategy.
+ README.md | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 README.md
+
+再度、ローカルリポジトリをリモートリポジトリへ反映させる → push OK! 
+
+一件落着
+
+「--allow-unrelated-histories」について
+ちゃんと調べてみたところ
+Git 2.9から mergeコマンドとpullコマンドでは，--allow-unrelated-historiesを指定しない限り，無関係なヒストリを持つ２つのブランチをマージすることはできなくなった。
+とありました。
+
+考察
+まだ、GitHub、Gitの理解が浅いので見当違いなことを言っているかもしれませんが、GitHub上でリポジトリを作成したタイミングで、README.mdがコミットされているのに、それをローカルリポジトリに取り込まずに、ローカルのソースをコミットしてしまったのが原因と思われる。
+結果、それぞれが別ヒストリとなり、mergeエラーになったのかなと。
