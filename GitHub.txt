@@ -89,3 +89,9 @@ Git 2.9から mergeコマンドとpullコマンドでは，--allow-unrelated-historiesを指定し
 考察
 まだ、GitHub、Gitの理解が浅いので見当違いなことを言っているかもしれませんが、GitHub上でリポジトリを作成したタイミングで、README.mdがコミットされているのに、それをローカルリポジトリに取り込まずに、ローカルのソースをコミットしてしまったのが原因と思われる。
 結果、それぞれが別ヒストリとなり、mergeエラーになったのかなと。
+
+2020/05/10 18:07
+ASP
+https://github.com/duchamp1/ASP.git
+test
+https://github.com/duchamp1/test.git
