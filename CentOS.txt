@@ -152,3 +152,81 @@ service vsftpd start
 この時、「Starting vsftpd for vsftpd: 500 OOPS: SSL: cannot load RSA certificate」というエラーが表示される場合は、
 設定ファイルに記述した「/etc/pki/tls/certs/vsftpd.pem」に存在していないことが考えられます。
 https://www.icoro.com/201001194677
+
+2020/05/21 11:06
+svnserveの起動確認
+クライアントがsvnプロトコルを使用してリポジトリへアクセスするためにはサーバー側でsvnserveを起動させておく必要があります。
+起動確認は以下コマンドで行えます。
+service svnserve status
+「running」になっていなければ以下のコマンドでsvnserveを起動します。
+service svnserve start
+
+[CentOS7][SVN]サーバ構築
+https://qiita.com/SierSetup/items/c47b861dc563919c94ac
+
+ねらい
+家庭内でSVNサーバ立てて利用したい。
+
+構成
+SVNサーバ
+CentOS 7
+
+クライアント
+TortoiseSVN
+通信プロトコル：SVN
+
+インストール
+yum install subversion
+
+リポジトリ用ディレクトリを作成
+mkdir /data/svn/
+
+リポジトリ登録
+svnadmin create /data/svn/
+
+リポジトリの仮想ルートを修正
+vi /etc/sysconfig/svnserve
+修正前
+OPTIONS="-r /var/svn/"
+修正後
+OPTIONS="-r /data/svn/"
+
+リポジトリのアクセス制御を変更
+vi /data/svn/conf/svnserve.conf
+修正前
+# anon-access = read
+修正後
+anon-access = write
+行頭に空白があるとアクセス時にエラー「～Option expected」が出るのでハマりポイント。
+
+※この設定内容自体はセキュリティ的にアレなので、自己責任で。
+
+ファイアウォールの設定
+
+事前確認
+firewall-cmd --list-all
+
+設定（デフォルトポートを許可）
+firewall-cmd --permanent --add-port=3690/tcp
+
+更新
+firewall-cmd --reload
+
+事後確認
+firewall-cmd --list-all
+
+サービス化とサーバプロセス開始
+
+サービス化
+systemctl enable svnserve.service
+起動時にサービス起動されるようにする。
+
+開始
+systemctl start svnserve.service
+
+開始結果ステータス確認
+systemctl status svnserve.service
+
+あとはTortoiseSVNでアクセス
+URL:svn://[SVNサーバIP]
+でアクセス
