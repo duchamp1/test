@@ -230,3 +230,76 @@ systemctl status svnserve.service
 あとはTortoiseSVNでアクセス
 URL:svn://[SVNサーバIP]
 でアクセス
+
+2020/05/25 16:42
+CentOSでWebSVNが動かなかったのはSELinuxの設定が原因だった
+https://qiita.com/snaka/items/9db959d9494ebda30a98
+
+現象
+SVNサーバとは別のサーバにApache入れてWebSVNを立ち上げたが、正常に動作しない。
+Apacheのerror_logには以下のような出力が出てた。
+
+svn: E000013: Unable to connect to a repository at URL 'svn://218.219.151.16/home/svn/repos/claris'
+svn: E000013: Can't connect to host '218.219.151.16': Permission denied
+
+原因
+どうやらSELinuxが有効化されているとhttpdのCGI経由でのネットワークアクセスが制限され、結果としてWebSVNのようなスクリプトが正常に動作しないらしい。
+
+対処
+そもそもCGIで他ホストに繋いで情報のやりとりを許すことにいろいろ問題あることは置いといて（イントラネット内のサービスなので目をつぶる）。
+対応としてはSELinuxの設定で、httpd_can_network_connectをonにする。
+
+例
+現在の設定を確認
+$ sudo getsebool httpd_can_network_connect
+httpd_can_network_connect --> off
+
+ONにする
+$ sudo setsebool httpd_can_network_connect 1
+
+設定を再度確認
+$ sudo getsebool httpd_can_network_connect
+httpd_can_network_connect --> on
+
+
+これでWebSVNが動作するようになった。
+
+
+参考
+トラブルシューティングはCentOS 5におまかせ － ＠IT
+
+2020/06/02 17:22
+Apache 2.4 で configure 実行時に「configure: error: APR not found」と怒られる
+https://yohei-a.hatenablog.jp/entry/20120809/1344489131
+解決策
+Download - The Apache Portable Runtime Project から apr-1.4.6.tar.gz、apr-util-1.4.1.tar.gz をダウンロードする。
+https://ftp.tsukuba.wide.ad.jp/software/apache//apr/apr-1.7.0.tar.gz
+https://ftp.tsukuba.wide.ad.jp/software/apache//apr/apr-util-1.6.1.tar.gz
+
+# cd /usr/local/src/httpd-2.4.2/srclib
+# ls apr*
+apr-1.4.6.tar.gz  apr-util-1.4.1.tar.gz #←ここにおく
+# tar xfvz apr-1.4.6.tar.gz
+# tar xfvz apr-util-1.4.1.tar.gz 
+# mv apr-1.4.6 apr
+# mv apr-util-1.4.1 apr-util
+# cd ..
+# ./configure --prefix=/usr/local/apache2
+
+Apacheのconfigure時のエラー「configure: error: no acceptable C compiler found in $PATH」の原因と解決方法
+https://nobuneko.com/blog/archives/2011/07/apacheconfigureconfigure_error.html
+「no acceptable C compiler found」というエラーメッセージより、Cコンパイラが見つからない、ということが分かるので、yumなどでCコンパイラをインストールする。
+# yum install gcc
+
+PCREをインストール
+http://www.koikikukan.com/archives/2016/11/22-005555.php
+PCREのページにアクセスして、「pcre-8.39.tar.gz」をダウンロード（ソースからビルドしてインストールするのであればC++コンパイラ（g++）が必要）。
+https://sourceforge.net/projects/pcre/files/pcre/8.39/pcre-8.39.tar.gz/download
+# tar xvzf pcre-8.39.tar.gz
+# yum -y install gcc-c++
+
+2020/06/03 10:12
+致命的なエラー
+https://qiita.com/knutpb1205/items/6525a6374bef16e52b16
+expat-develをインストールする。
+# yum -y install expat-devel
