@@ -1,6 +1,7 @@
 hostname:VMLinux
 Pass:joanmiro1
 ipaddress:192.168.19.128
+http://192.168.19.129/
 2020/05/13 17:33
 Subversionによるバージョン管理入門
 http://svn.linux-dvr.biz/
@@ -303,3 +304,14 @@ https://sourceforge.net/projects/pcre/files/pcre/8.39/pcre-8.39.tar.gz/download
 https://qiita.com/knutpb1205/items/6525a6374bef16e52b16
 expat-develをインストールする。
 # yum -y install expat-devel
+
+CentOS 7 サービス自動起動設定
+https://www.server-memo.net/centos-settings/centos7/systemctl-enable.html
+
+2020/06/09 13:52
+ファイアウォールiptablesを簡単解説～初心者でもよくわかる！VPSによるWebサーバー運用講座(4)
+https://knowledge.sakura.ad.jp/4048/
+CentOS7でiptablesを使ってみる
+http://andosho.blog.fc2.com/blog-entry-16.html
+CentOS7 で iptables を使用できるように設定する
+https://www.websec-room.com/2015/03/28/2214
