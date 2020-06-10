@@ -315,3 +315,11 @@ CentOS7でiptablesを使ってみる
 http://andosho.blog.fc2.com/blog-entry-16.html
 CentOS7 で iptables を使用できるように設定する
 https://www.websec-room.com/2015/03/28/2214
+
+2020/06/10 12:14
+[FTP/FTPS][vsftpd][FileZilla]リモートのファイル一覧がとれない
+http://somenotes.seesaa.net/article/317380908.html
+/etc/vsftpd.conf に "require_ssl_reuse=NO"を追加してみたら解決。
+
+ipv6を無効
+listen_ipv6=NO
