@@ -323,3 +323,19 @@ http://somenotes.seesaa.net/article/317380908.html
 
 ipv6を無効
 listen_ipv6=NO
+
+2020/07/06 15:05
+vsftpd でフォルダが見れない
+http://znetj.blog66.fc2.com/blog-entry-248.html
+CentOSにて vsftpd を設定後　ftpでアクセスすると
+Error: Transfer Done (but failed to open directory)
+と表示され
+lsでディレクトリの表示が出来ない。
+
+調べるとhttp://blog.danielburrowes.com/2009/06/vsftpd-transfer-done-but-failed-to-open.htmlにあるように、
+vsftpdの設定でなく、SELINUXの設定が必要のようだ。
+
+1.cd /etc/selinux
+2.vi config
+3.SELINUX=の行を　SELINUX=disableと変更
+4.マシンの再起動
